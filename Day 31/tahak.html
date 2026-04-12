@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <title>Python Tahak</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #1e1e2e;
+            color: #cdd6f4;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        h1 {
+            color: #cba6f7;
+            border-bottom: 2px solid #cba6f7;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #89b4fa;
+            margin-top: 30px;
+        }
+        pre {
+            background: #181825;
+            border-left: 4px solid #89b4fa;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .comment { color: #6c7086; }
+        .keyword { color: #cba6f7; }
+        .string { color: #a6e3a1; }
+        .number { color: #fab387; }
+        .func { color: #89dceb; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th {
+            background: #313244;
+            color: #cba6f7;
+            padding: 10px 14px;
+            text-align: left;
+        }
+        td {
+            padding: 9px 14px;
+            border-bottom: 1px solid #313244;
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+        }
+        td:first-child { color: #f38ba8; }
+        td:last-child { color: #a6e3a1; }
+        tr:hover td { background: #313244; }
+
+        .section {
+            background: #181825;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Python Tahak — OOP + Slovniky + Subory + Pandas</h1>
+
+<div class="section">
+<h2>Slovniky</h2>
+<pre><span class="comment"># Pridaj / aktualizuj</span>
+<span class="keyword">if</span> klic <span class="keyword">in</span> slovnik:
+    slovnik[klic] += hodnota         <span class="comment"># cislo</span>
+    slovnik[klic].append(hodnota)    <span class="comment"># zoznam</span>
+<span class="keyword">else</span>:
+    slovnik[klic] = hodnota          <span class="comment"># cislo</span>
+    slovnik[klic] = [hodnota]        <span class="comment"># zoznam</span>
+
+<span class="comment"># Prechadzanie</span>
+<span class="keyword">for</span> k, v <span class="keyword">in</span> slovnik.<span class="func">items</span>():   <span class="comment"># kluc + hodnota</span>
+<span class="keyword">for</span> k <span class="keyword">in</span> slovnik:               <span class="comment"># len kluce</span></pre>
+</div>
+
+<div class="section">
+<h2>Triedy</h2>
+<pre><span class="comment"># Dve nesuvisiace triedy — NEDEDIA od seba!</span>
+<span class="keyword">class</span> <span class="func">Polozka</span>:
+    <span class="keyword">def</span> <span class="func">__init__</span>(<span class="keyword">self</span>, nazov, cena):
+        <span class="keyword">self</span>.nazov = nazov
+        <span class="keyword">self</span>.cena = cena
+
+<span class="keyword">class</span> <span class="func">Spravca</span>:
+    <span class="keyword">def</span> <span class="func">__init__</span>(<span class="keyword">self</span>):
+        <span class="keyword">self</span>.zoznam = []          <span class="comment"># interni zoznam objektov</span>
+
+    <span class="keyword">def</span> <span class="func">pridaj</span>(<span class="keyword">self</span>, nazov, cena):
+        <span class="keyword">self</span>.zoznam.<span class="func">append</span>(<span class="func">Polozka</span>(nazov, cena))  <span class="comment"># vytvor objekt!</span>
+
+    <span class="keyword">def</span> <span class="func">vypis</span>(<span class="keyword">self</span>):
+        <span class="keyword">for</span> p <span class="keyword">in</span> <span class="keyword">self</span>.zoznam:
+            <span class="func">print</span>(p.nazov, p.cena)   <span class="comment"># pristup cez atributy</span></pre>
+</div>
+
+<div class="section">
+<h2>Subory</h2>
+<pre><span class="comment"># Zapis</span>
+<span class="keyword">with</span> <span class="func">open</span>(<span class="string">"subor.txt"</span>, <span class="string">"w"</span>, encoding=<span class="string">"utf-8"</span>) <span class="keyword">as</span> f:
+    <span class="keyword">for</span> p <span class="keyword">in</span> <span class="keyword">self</span>.zoznam:
+        f.<span class="func">write</span>(<span class="string">f"{p.nazov},{p.cena}\n"</span>)   <span class="comment"># \n = novy riadok, bez medzier!</span>
+
+<span class="comment"># Citanie</span>
+<span class="keyword">with</span> <span class="func">open</span>(<span class="string">"subor.txt"</span>, <span class="string">"r"</span>, encoding=<span class="string">"utf-8"</span>) <span class="keyword">as</span> f:
+    <span class="keyword">for</span> riadok <span class="keyword">in</span> f.<span class="func">read</span>().<span class="func">splitlines</span>():
+        nazov, cena = riadok.<span class="func">split</span>(<span class="string">","</span>)
+        <span class="keyword">self</span>.zoznam.<span class="func">append</span>(<span class="func">Polozka</span>(nazov, <span class="func">float</span>(cena)))  <span class="comment"># cisla konvertuj!</span></pre>
+</div>
+
+<div class="section">
+<h2>Uzitocne funkcie</h2>
+<pre><span class="func">min</span>(zoznam, key=<span class="keyword">lambda</span> x: x.atribut)   <span class="comment"># najmensi podla atributu</span>
+<span class="func">max</span>(zoznam, key=<span class="keyword">lambda</span> x: x.atribut)   <span class="comment"># najvacsi podla atributu</span>
+<span class="func">sum</span>(zoznam)                              <span class="comment"># sucet cisel</span>
+<span class="func">len</span>(zoznam)                              <span class="comment"># pocet prvkov</span>
+
+<span class="func">enumerate</span>(zoznam, start=<span class="number">1</span>)              <span class="comment"># index + hodnota (od 1)</span>
+<span class="string">"a,b,c"</span>.<span class="func">split</span>(<span class="string">","</span>)                       <span class="comment"># ["a", "b", "c"]</span>
+text.<span class="func">splitlines</span>()                        <span class="comment"># text na zoznam riadkov</span>
+<span class="func">float</span>(<span class="string">"3.14"</span>)                            <span class="comment"># string na cislo</span></pre>
+</div>
+
+<div class="section">
+<h2>Caste chyby</h2>
+<table>
+    <tr><th>Chyba</th><th>Spravne</th></tr>
+    <tr><td>slovnik[klic][hodnota]</td><td>slovnik[klic]</td></tr>
+    <tr><td>for x in slovnik</td><td>for k, v in slovnik.items()</td></tr>
+    <tr><td>f.read(text)</td><td>f.read()</td></tr>
+    <tr><td>f.write(objekt)</td><td>f.write(f"{obj.atribut}")</td></tr>
+    <tr><td>items bez ()</td><td>items()</td></tr>
+    <tr><td>metoda bez ()</td><td>metoda()</td></tr>
+    <tr><td>class B(A) ked B nie je A</td><td>class B: — samostatna trieda</td></tr>
+    <tr><td>nacitany string porovnavat ako cislo</td><td>float(hodnota) pri nacitani</td></tr>
+</table>
+</div>
+
+
+<div class="section">
+<h2>List Comprehension</h2>
+<pre><span class="comment"># Zakladna struktura</span>
+vysledok = [hodnota <span class="keyword">for</span> hodnota <span class="keyword">in</span> zoznam]
+vysledok = [hodnota <span class="keyword">for</span> hodnota <span class="keyword">in</span> zoznam <span class="keyword">if</span> podmienka]
+vysledok = [hodnota * <span class="number">2</span> <span class="keyword">for</span> hodnota <span class="keyword">in</span> zoznam]
+
+<span class="comment"># Tuple rozbalenie</span>
+[meno <span class="keyword">for</span> meno, oddelenie, plat <span class="keyword">in</span> zoznam <span class="keyword">if</span> oddelenie == <span class="string">"IT"</span>]
+
+<span class="comment"># Viac podmienok</span>
+[meno <span class="keyword">for</span> meno, odd, plat <span class="keyword">in</span> zoznam <span class="keyword">if</span> odd == <span class="string">"IT"</span> <span class="keyword">and</span> plat > <span class="number">2700</span>]
+
+<span class="comment"># Z pandas DataFrame</span>
+[row[<span class="string">"meno"</span>] <span class="keyword">for</span> _, row <span class="keyword">in</span> df.<span class="func">iterrows</span>() <span class="keyword">if</span> row[<span class="string">"plat"</span>] > <span class="number">2700</span>]</pre>
+</div>
+
+<div class="section">
+<h2>Pandas</h2>
+<pre><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+
+<span class="comment"># Nacitanie / ulozenie</span>
+df = pd.<span class="func">read_csv</span>(<span class="string">"subor.csv"</span>)
+df.<span class="func">to_csv</span>(<span class="string">"novy.csv"</span>, index=<span class="keyword">False</span>)
+
+<span class="comment"># Pristup k datam</span>
+df[<span class="string">"meno"</span>]                        <span class="comment"># jeden stlpec</span>
+df[df[<span class="string">"oddelenie"</span>] == <span class="string">"IT"</span>]       <span class="comment"># filtrovanie riadkov</span>
+
+<span class="comment"># Filtrovanie — pozor: & nie and, zatvorky povinne!</span>
+df[(df[<span class="string">"oddelenie"</span>] == <span class="string">"IT"</span>) & (df[<span class="string">"plat"</span>] > <span class="number">2700</span>)]
+
+<span class="comment"># Zakladne operacie</span>
+df[<span class="string">"plat"</span>].<span class="func">mean</span>()    <span class="comment"># priemer</span>
+df[<span class="string">"plat"</span>].<span class="func">max</span>()     <span class="comment"># maximum</span>
+df[<span class="string">"plat"</span>].<span class="func">min</span>()     <span class="comment"># minimum</span>
+df[<span class="string">"plat"</span>].<span class="func">sum</span>()     <span class="comment"># sucet</span>
+
+<span class="comment"># Groupby</span>
+df.<span class="func">groupby</span>(<span class="string">"oddelenie"</span>)[<span class="string">"plat"</span>].<span class="func">mean</span>()    <span class="comment"># priemer platu podla oddelenia</span>
+df.<span class="func">groupby</span>(<span class="string">"oddelenie"</span>)[<span class="string">"meno"</span>].<span class="func">count</span>()   <span class="comment"># pocet v oddeleni</span>
+
+<span class="comment"># Zamestnanec s max hodnotou v kazdom oddeleni</span>
+df.<span class="func">loc</span>[df.<span class="func">groupby</span>(<span class="string">"oddelenie"</span>)[<span class="string">"roky"</span>].<span class="func">idxmax</span>()]
+
+<span class="comment"># Novy stlpec s podmienkou (lambda)</span>
+df[<span class="string">"bonus"</span>] = df.<span class="func">apply</span>(<span class="keyword">lambda</span> row: row[<span class="string">"plat"</span>] * <span class="number">0.05</span> <span class="keyword">if</span> row[<span class="string">"roky"</span>] > <span class="number">3</span> <span class="keyword">else</span> row[<span class="string">"plat"</span>] * <span class="number">0.02</span>, axis=<span class="number">1</span>)</pre>
+</div>
+
+<div class="section">
+<h2>Caste chyby — Pandas</h2>
+<table>
+    <tr><th>Chyba</th><th>Spravne</th></tr>
+    <tr><td>df[podmienka1] and df[podmienka2]</td><td>(podmienka1) & (podmienka2)</td></tr>
+    <tr><td>for x in df</td><td>for _, row in df.iterrows()</td></tr>
+    <tr><td>groupby("plat")["oddelenie"]</td><td>groupby("oddelenie")["plat"]</td></tr>
+    <tr><td>to_csv bez index=False</td><td>to_csv("subor.csv", index=False)</td></tr>
+</table>
+</div>
+
+</body>
+</html>

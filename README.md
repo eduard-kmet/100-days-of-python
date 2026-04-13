@@ -21,18 +21,7 @@ Each day has its own folder with the exercises, projects, and notes from that da
 
 ---
 
-## 📈 Progress
 
-| Day | Topic | Key concepts |
-|-----|-------|-------------|
-| 29 | Password Manager | File I/O, JSON, GUI with Tkinter |
-| 30 | Password Manager upgrade | Error handling, `try/except` |
-| 31 | Flash Card App | Tkinter, pandas, CSV data |
-| 32 | Birthday Wisher | `smtplib`, `datetime`, automation |
-
-*(Updated as I progress)*
-
----
 
 ## 🎯 Why I'm learning Python
 

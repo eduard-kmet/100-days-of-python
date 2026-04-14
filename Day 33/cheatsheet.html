@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Day 33 – API Practise – Tahák</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --card: #1a1d27;
+      --border: #2e3148;
+      --accent: #6c63ff;
+      --accent2: #ff6584;
+      --green: #43d9ad;
+      --yellow: #ffd166;
+      --text: #e2e8f0;
+      --muted: #8892a4;
+      --code-bg: #0d1117;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    header .day-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.9rem;
+      border-radius: 999px;
+      margin-bottom: 0.75rem;
+    }
+    header h1 { font-size: 2rem; font-weight: 800; }
+    header p { color: var(--muted); margin-top: 0.4rem; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.4rem 1.6rem;
+    }
+    .card h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .card h2 .icon { font-style: normal; }
+
+    pre, code {
+      font-family: 'Fira Code', 'Cascadia Code', Consolas, monospace;
+      font-size: 0.82rem;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin-top: 0.6rem;
+    }
+
+    .kw  { color: #ff79c6; }   /* keyword */
+    .fn  { color: #50fa7b; }   /* function */
+    .st  { color: #f1fa8c; }   /* string */
+    .cm  { color: #6272a4; }   /* comment */
+    .nb  { color: #8be9fd; }   /* built-in / class */
+    .nm  { color: #ffb86c; }   /* number / const */
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+    }
+    .pill {
+      background: #2a2d3e;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.25rem 0.65rem;
+      font-size: 0.8rem;
+      font-family: 'Fira Code', monospace;
+    }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 0.6rem; font-size: 0.85rem; }
+    th { text-align: left; color: var(--muted); font-weight: 600; padding: 0.3rem 0; border-bottom: 1px solid var(--border); }
+    td { padding: 0.35rem 0; vertical-align: top; border-bottom: 1px solid #1e2130; }
+    td:first-child { color: var(--green); font-family: monospace; padding-right: 1rem; white-space: nowrap; }
+
+    .note {
+      background: #1e2130;
+      border-left: 3px solid var(--yellow);
+      border-radius: 4px;
+      padding: 0.6rem 0.9rem;
+      font-size: 0.85rem;
+      margin-top: 0.75rem;
+      color: var(--text);
+    }
+    .note strong { color: var(--yellow); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="day-badge">Day 33</div>
+  <h1>APIs, Email &amp; ISS Tracker</h1>
+  <p>requests · smtplib · dotenv · datetime · tkinter Canvas</p>
+</header>
+
+<div class="grid">
+
+  <!-- requests -->
+  <div class="card">
+    <h2><span class="icon">🌐</span> requests – HTTP GET</h2>
+    <pre><span class="kw">import</span> requests
+
+<span class="cm"># Základný GET</span>
+response = requests.<span class="fn">get</span>(<span class="st">"https://api.example.com/data"</span>)
+response.<span class="fn">raise_for_status</span>()   <span class="cm"># vyhodí výnimku pri 4xx/5xx</span>
+data = response.<span class="fn">json</span>()        <span class="cm"># dict z JSON odpovede</span>
+
+<span class="cm"># GET s parametrami (query string)</span>
+params = {<span class="st">"lat"</span>: <span class="nm">48.15</span>, <span class="st">"lng"</span>: <span class="nm">17.14</span>}
+response = requests.<span class="fn">get</span>(url, params=params)
+<span class="cm"># → url?lat=48.15&lng=17.14</span></pre>
+    <div class="note">
+      <strong>raise_for_status()</strong> – vždy volaj hneď po .get(), aby si hneď videl chybu namiesto tichého zlyhania.
+    </div>
+  </div>
+
+  <!-- smtplib -->
+  <div class="card">
+    <h2><span class="icon">📧</span> smtplib – Posielanie emailov</h2>
+    <pre><span class="kw">import</span> smtplib
+
+<span class="kw">with</span> smtplib.<span class="nb">SMTP</span>(<span class="st">"smtp.gmail.com"</span>) <span class="kw">as</span> conn:
+    conn.<span class="fn">starttls</span>()           <span class="cm"># šifrovaný kanál</span>
+    conn.<span class="fn">login</span>(user=MY_EMAIL,
+               password=PASSWORD)
+    msg = (<span class="st">f"Subject:Look up!\n\n"</span>
+           <span class="st">"The ISS is above you!"</span>
+          ).<span class="fn">encode</span>(<span class="st">"utf-8"</span>)
+    conn.<span class="fn">sendmail</span>(
+        from_addr=MY_EMAIL,
+        to_addrs=MY_EMAIL,
+        msg=msg
+    )</pre>
+    <div class="note">
+      <strong>Formát správy:</strong> <code>Subject:Predmet\n\nTelo</code> – dvojitý newline oddeľuje hlavičku od tela.
+    </div>
+  </div>
+
+  <!-- dotenv -->
+  <div class="card">
+    <h2><span class="icon">🔐</span> dotenv – Tajné premenné</h2>
+    <pre><span class="cm"># .env súbor (NIKDY nekomiťuj!)</span>
+MY_EMAIL=tvoj@gmail.com
+MY_PASSWORD=tajneheslo
+
+<span class="cm"># Python</span>
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+<span class="kw">import</span> os
+
+<span class="fn">load_dotenv</span>(dotenv_path=<span class="st">"../.env"</span>)
+
+MY_EMAIL = os.<span class="fn">getenv</span>(<span class="st">"MY_EMAIL"</span>)
+PASSWORD = os.<span class="fn">getenv</span>(<span class="st">"MY_PASSWORD"</span>)</pre>
+    <div class="note">
+      <strong>Prečo?</strong> Heslo nikdy nejde priamo do kódu ani do gitu. Súbor .env pridaj do .gitignore.
+    </div>
+  </div>
+
+  <!-- datetime -->
+  <div class="card">
+    <h2><span class="icon">🕐</span> datetime – Čas a dátum</h2>
+    <pre><span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+now = datetime.<span class="fn">now</span>()
+hour = now.hour        <span class="cm"># int 0–23</span>
+minute = now.minute
+day = now.day
+
+<span class="cm"># Parsovanie ISO stringu z API</span>
+<span class="cm"># "2024-01-15T06:23:00+00:00"</span>
+sunrise_hour = <span class="nb">int</span>(
+    data[<span class="st">"sunrise"</span>].<span class="fn">split</span>(<span class="st">"T"</span>)[<span class="nm">1</span>].<span class="fn">split</span>(<span class="st">":"</span>)[<span class="nm">0</span>]
+)</pre>
+  </div>
+
+  <!-- time.sleep + polling loop -->
+  <div class="card">
+    <h2><span class="icon">🔁</span> Polling Loop (time.sleep)</h2>
+    <pre><span class="kw">import</span> time
+
+<span class="kw">while</span> <span class="nm">True</span>:
+    time.<span class="fn">sleep</span>(<span class="nm">60</span>)      <span class="cm"># čakaj 60 sekúnd</span>
+    <span class="kw">if</span> <span class="fn">is_iss_overhead</span>() <span class="kw">and</span> <span class="fn">is_night</span>():
+        <span class="fn">send_email</span>()</pre>
+    <div class="note">
+      <strong>Pozor:</strong> <code>is_iss_overhead</code> (bez zátvoriek) je vždy <code>True</code> – je to referencia na funkciu, nie volanie! Vždy volaj s <code>()</code>.
+    </div>
+  </div>
+
+  <!-- tkinter canvas + API -->
+  <div class="card">
+    <h2><span class="icon">🖼️</span> tkinter Canvas + API tlačidlo</h2>
+    <pre><span class="kw">from</span> tkinter <span class="kw">import</span> *
+<span class="kw">import</span> requests
+
+<span class="kw">def</span> <span class="fn">get_quote</span>():
+    r = requests.<span class="fn">get</span>(<span class="st">"https://api.kanye.rest/"</span>)
+    quote = r.<span class="fn">json</span>()[<span class="st">"quote"</span>]
+    canvas.<span class="fn">itemconfig</span>(quote_text, text=quote)
+
+window = <span class="nb">Tk</span>()
+canvas = <span class="nb">Canvas</span>(width=<span class="nm">300</span>, height=<span class="nm">414</span>)
+bg_img = <span class="nb">PhotoImage</span>(file=<span class="st">"background.png"</span>)
+canvas.<span class="fn">create_image</span>(<span class="nm">150</span>, <span class="nm">207</span>, image=bg_img)
+quote_text = canvas.<span class="fn">create_text</span>(
+    <span class="nm">150</span>, <span class="nm">207</span>, text=<span class="st">"..."</span>, width=<span class="nm">250</span>,
+    font=(<span class="st">"Arial"</span>, <span class="nm">30</span>, <span class="st">"bold"</span>), fill=<span class="st">"white"</span>
+)
+canvas.<span class="fn">grid</span>(row=<span class="nm">0</span>, column=<span class="nm">0</span>)
+
+btn_img = <span class="nb">PhotoImage</span>(file=<span class="st">"kanye.png"</span>)
+btn = <span class="nb">Button</span>(image=btn_img, command=get_quote,
+             highlightthickness=<span class="nm">0</span>)
+btn.<span class="fn">grid</span>(row=<span class="nm">1</span>, column=<span class="nm">0</span>)
+
+window.<span class="fn">mainloop</span>()</pre>
+  </div>
+
+  <!-- API response navigation -->
+  <div class="card">
+    <h2><span class="icon">🗺️</span> Navigácia v JSON odpovedi</h2>
+    <pre><span class="cm"># ISS API odpoveď</span>
+{
+  <span class="st">"iss_position"</span>: {
+    <span class="st">"latitude"</span>: <span class="st">"48.2"</span>,
+    <span class="st">"longitude"</span>: <span class="st">"17.1"</span>
+  },
+  <span class="st">"timestamp"</span>: <span class="nm">1714000000</span>
+}
+
+iss_lat = <span class="nb">float</span>(data[<span class="st">"iss_position"</span>][<span class="st">"latitude"</span>])
+
+<span class="cm"># Sunrise API odpoveď</span>
+{
+  <span class="st">"results"</span>: {
+    <span class="st">"sunrise"</span>: <span class="st">"2024-01-15T06:23:00+00:00"</span>
+  }
+}
+
+sunrise_h = <span class="nb">int</span>(
+    data[<span class="st">"results"</span>][<span class="st">"sunrise"</span>].<span class="fn">split</span>(<span class="st">"T"</span>)[<span class="nm">1</span>].<span class="fn">split</span>(<span class="st">":"</span>)[<span class="nm">0</span>]
+)</pre>
+  </div>
+
+  <!-- prehľad použitých API -->
+  <div class="card">
+    <h2><span class="icon">📡</span> Použité API</h2>
+    <table>
+      <tr><th>API</th><th>Na čo</th></tr>
+      <tr><td>api.kanye.rest</td><td>Random Kanye quote (GET, bez kľúča)</td></tr>
+      <tr><td>api.open-notify.org<br>/iss-now.json</td><td>Aktuálna poloha ISS (bez kľúča)</td></tr>
+      <tr><td>api.sunrise-sunset.org/json</td><td>Čas východu/západu slnka podľa súradníc</td></tr>
+    </table>
+    <div class="note">
+      <strong>params=</strong> v requests.get() automaticky urlencóduje slovník na query string.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

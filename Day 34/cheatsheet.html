@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Day 34 – API + Tkinter Quiz – Tahák</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --card: #1a1d27;
+      --border: #2e3148;
+      --accent: #43d9ad;
+      --accent2: #ff6584;
+      --purple: #bd93f9;
+      --yellow: #ffd166;
+      --text: #e2e8f0;
+      --muted: #8892a4;
+      --code-bg: #0d1117;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    header .day-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #0f1117;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.9rem;
+      border-radius: 999px;
+      margin-bottom: 0.75rem;
+    }
+    header h1 { font-size: 2rem; font-weight: 800; }
+    header p { color: var(--muted); margin-top: 0.4rem; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.4rem 1.6rem;
+    }
+    .card.wide {
+      grid-column: 1 / -1;
+    }
+    .card h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    pre, code {
+      font-family: 'Fira Code', 'Cascadia Code', Consolas, monospace;
+      font-size: 0.82rem;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin-top: 0.6rem;
+    }
+
+    .kw  { color: #ff79c6; }
+    .fn  { color: #50fa7b; }
+    .st  { color: #f1fa8c; }
+    .cm  { color: #6272a4; }
+    .nb  { color: #8be9fd; }
+    .nm  { color: #ffb86c; }
+    .tp  { color: #bd93f9; }  /* type hint */
+
+    table { width: 100%; border-collapse: collapse; margin-top: 0.6rem; font-size: 0.85rem; }
+    th { text-align: left; color: var(--muted); font-weight: 600; padding: 0.3rem 0; border-bottom: 1px solid var(--border); }
+    td { padding: 0.35rem 0; vertical-align: top; border-bottom: 1px solid #1e2130; }
+    td:first-child { color: var(--accent); font-family: monospace; padding-right: 1rem; white-space: nowrap; }
+
+    .note {
+      background: #1e2130;
+      border-left: 3px solid var(--yellow);
+      border-radius: 4px;
+      padding: 0.6rem 0.9rem;
+      font-size: 0.85rem;
+      margin-top: 0.75rem;
+      color: var(--text);
+    }
+    .note strong { color: var(--yellow); }
+
+    .arch {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 0.75rem;
+      justify-content: center;
+    }
+    .arch-box {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.8rem 1.2rem;
+      text-align: center;
+      min-width: 130px;
+    }
+    .arch-box .title { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; }
+    .arch-box .name  { font-size: 1rem; font-weight: 700; color: var(--accent); margin-top: 0.2rem; }
+    .arch-box .desc  { font-size: 0.78rem; color: var(--muted); margin-top: 0.3rem; }
+    .arch-arrow { display: flex; align-items: center; color: var(--muted); font-size: 1.4rem; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="day-badge">Day 34</div>
+  <h1>API + Tkinter Quiz App</h1>
+  <p>OOP · html.unescape · Type hints · window.after() · Open Trivia DB</p>
+</header>
+
+<div class="grid">
+
+  <!-- Architektúra projektu -->
+  <div class="card wide">
+    <h2>🏗️ Architektúra projektu (súbory)</h2>
+    <div class="arch">
+      <div class="arch-box">
+        <div class="title">Dáta</div>
+        <div class="name">data.py</div>
+        <div class="desc">question_data<br>z Open Trivia DB</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box">
+        <div class="title">Model</div>
+        <div class="name">question_model.py</div>
+        <div class="desc">Trieda Question<br>(text, answer)</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box">
+        <div class="title">Logika</div>
+        <div class="name">quiz_brain.py</div>
+        <div class="desc">QuizBrain<br>skóre, otázky</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box">
+        <div class="title">UI</div>
+        <div class="name">ui.py</div>
+        <div class="desc">QuizInterface<br>tkinter okno</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box">
+        <div class="title">Vstupný bod</div>
+        <div class="name">main.py</div>
+        <div class="desc">Spustenie:<br>spája všetko</div>
+      </div>
+    </div>
+    <div class="note" style="margin-top:1rem">
+      <strong>Princíp:</strong> Každý súbor má jednu zodpovednosť. UI neobsahuje logiku, logika neobsahuje UI — ľahšie testovanie a úpravy.
+    </div>
+  </div>
+
+  <!-- Question trieda -->
+  <div class="card">
+    <h2>📦 Trieda Question (Model)</h2>
+    <pre><span class="cm"># question_model.py</span>
+<span class="kw">class</span> <span class="nb">Question</span>:
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, q_text, q_answer):
+        self.text = q_text
+        self.answer = q_answer</pre>
+    <div class="note">
+      <strong>Jednoduchý model</strong> – len ukladá dáta. Žiadna logika. Inštancie sa vytvárajú v main.py z API dát.
+    </div>
+    <pre style="margin-top:0.8rem"><span class="cm"># main.py – vytvorenie question_bank</span>
+question_bank = []
+<span class="kw">for</span> q <span class="kw">in</span> question_data:
+    new_q = <span class="nb">Question</span>(q[<span class="st">"question"</span>],
+                      q[<span class="st">"correct_answer"</span>])
+    question_bank.<span class="fn">append</span>(new_q)</pre>
+  </div>
+
+  <!-- QuizBrain -->
+  <div class="card">
+    <h2>🧠 QuizBrain – Herná logika</h2>
+    <pre><span class="kw">class</span> <span class="nb">QuizBrain</span>:
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, q_list):
+        self.question_number = <span class="nm">0</span>
+        self.score = <span class="nm">0</span>
+        self.question_list = q_list
+        self.current_question = <span class="nm">None</span>
+
+    <span class="kw">def</span> <span class="fn">still_has_questions</span>(self):
+        <span class="kw">return</span> self.question_number < <span class="nb">len</span>(self.question_list)
+
+    <span class="kw">def</span> <span class="fn">next_question</span>(self):
+        self.current_question = \
+            self.question_list[self.question_number]
+        self.question_number += <span class="nm">1</span>
+        q_text = html.<span class="fn">unescape</span>(
+            self.current_question.text
+        )
+        <span class="kw">return</span> <span class="st">f"Q.</span>{self.question_number}<span class="st">: </span>{q_text}<span class="st">"</span>
+
+    <span class="kw">def</span> <span class="fn">check_answer</span>(self, user_answer):
+        correct = self.current_question.answer
+        <span class="kw">if</span> user_answer.<span class="fn">lower</span>() == correct.<span class="fn">lower</span>():
+            self.score += <span class="nm">1</span>
+            <span class="kw">return</span> <span class="nm">True</span>
+        <span class="kw">return</span> <span class="nm">False</span></pre>
+  </div>
+
+  <!-- html.unescape -->
+  <div class="card">
+    <h2>🔡 html.unescape()</h2>
+    <pre><span class="kw">import</span> html
+
+<span class="cm"># API vracia HTML entity v texte:</span>
+raw = <span class="st">"Which country &amp;amp; city hosted 2016?"</span>
+clean = html.<span class="fn">unescape</span>(raw)
+<span class="cm"># → "Which country & city hosted 2016?"</span>
+
+<span class="cm"># Ďalšie príklady entity:</span>
+<span class="cm"># &amp;lt;   →  &lt;</span>
+<span class="cm"># &amp;gt;   →  &gt;</span>
+<span class="cm"># &amp;quot; →  "</span>
+<span class="cm"># &amp;#039; →  '</span></pre>
+    <div class="note">
+      <strong>Prečo?</strong> Open Trivia DB (a väčšina API) posiela text s HTML escape sekvenciami. <code>html.unescape()</code> ich prevedie na normálne znaky.
+    </div>
+  </div>
+
+  <!-- Type hints -->
+  <div class="card">
+    <h2>🏷️ Type Hints (typové anotácie)</h2>
+    <pre><span class="cm"># Bez type hint</span>
+<span class="kw">def</span> <span class="fn">__init__</span>(self, quiz_brain):
+    ...
+
+<span class="cm"># S type hint</span>
+<span class="kw">def</span> <span class="fn">__init__</span>(self, quiz_brain: <span class="tp">QuizBrain</span>):
+    ...
+
+<span class="cm"># Ďalšie príklady</span>
+<span class="kw">def</span> <span class="fn">greet</span>(name: <span class="tp">str</span>) -> <span class="tp">str</span>:
+    <span class="kw">return</span> <span class="st">f"Hello </span>{name}<span class="st">"</span>
+
+score: <span class="tp">int</span> = <span class="nm">0</span>
+is_right: <span class="tp">bool</span> = <span class="nm">True</span>
+items: <span class="tp">list</span>[<span class="tp">str</span>] = []</pre>
+    <div class="note">
+      <strong>Python ich nevynucuje za behu</strong> – slúžia ako dokumentácia a pre IDE (autocomplete, chybové hlášky). Čistejší kód.
+    </div>
+  </div>
+
+  <!-- window.after -->
+  <div class="card">
+    <h2>⏱️ window.after() – Oneskorená akcia</h2>
+    <pre><span class="cm"># Zavolaj funkciu po N milisekundách</span>
+self.window.<span class="fn">after</span>(<span class="nm">1000</span>, self.get_next_question)
+<span class="cm"># → po 1 sekunde zavolá get_next_question()</span>
+
+<span class="cm"># Prečo nie time.sleep()?</span>
+<span class="cm"># sleep() ZAMRAZÍ celé okno (neodpovedá)</span>
+<span class="cm"># after() je neblokujúce – okno zostáva živé</span>
+
+<span class="kw">def</span> <span class="fn">give_feedback</span>(self, is_right):
+    color = <span class="st">"green"</span> <span class="kw">if</span> is_right <span class="kw">else</span> <span class="st">"red"</span>
+    self.canvas.<span class="fn">config</span>(bg=color)
+    self.window.<span class="fn">after</span>(<span class="nm">1000</span>,
+                       self.get_next_question)</pre>
+  </div>
+
+  <!-- QuizInterface – tkinter -->
+  <div class="card">
+    <h2>🖼️ QuizInterface – Tkinter UI</h2>
+    <pre><span class="kw">class</span> <span class="nb">QuizInterface</span>:
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, quiz_brain: <span class="tp">QuizBrain</span>):
+        self.quiz = quiz_brain
+        self.window = <span class="nb">Tk</span>()
+        self.window.<span class="fn">config</span>(
+            padx=<span class="nm">20</span>, pady=<span class="nm">20</span>, bg=THEME_COLOR
+        )
+        <span class="cm"># Label pre skóre</span>
+        self.score_label = <span class="nb">Label</span>(
+            text=<span class="st">"Score: 0"</span>,
+            fg=<span class="st">"white"</span>, bg=THEME_COLOR
+        )
+        self.score_label.<span class="fn">grid</span>(row=<span class="nm">0</span>, column=<span class="nm">1</span>)
+        <span class="cm"># Canvas s textom otázky</span>
+        self.canvas = <span class="nb">Canvas</span>(
+            width=<span class="nm">300</span>, height=<span class="nm">250</span>, bg=<span class="st">"white"</span>
+        )
+        self.question_text = self.canvas.<span class="fn">create_text</span>(
+            <span class="nm">150</span>, <span class="nm">125</span>, width=<span class="nm">200</span>,
+            font=(<span class="st">"Arial"</span>, <span class="nm">10</span>, <span class="st">"italic"</span>),
+            fill=THEME_COLOR
+        )
+        self.canvas.<span class="fn">grid</span>(
+            row=<span class="nm">1</span>, column=<span class="nm">0</span>, columnspan=<span class="nm">2</span>
+        )</pre>
+  </div>
+
+  <!-- Tkinter widgety prehľad -->
+  <div class="card">
+    <h2>🧩 Použité Tkinter widgety</h2>
+    <table>
+      <tr><th>Widget</th><th>Popis</th></tr>
+      <tr><td>Tk()</td><td>Hlavné okno aplikácie</td></tr>
+      <tr><td>Label</td><td>Textový popisok (tu: skóre)</td></tr>
+      <tr><td>Canvas</td><td>Kresliacie plátno – text, obrázky, tvary</td></tr>
+      <tr><td>Button</td><td>Tlačidlo s obrázkom (True/False)</td></tr>
+      <tr><td>PhotoImage</td><td>Načítanie PNG obrázka pre Button/Canvas</td></tr>
+    </table>
+    <table style="margin-top:1rem">
+      <tr><th>Metóda</th><th>Popis</th></tr>
+      <tr><td>.config()</td><td>Zmena vlastností widgetu za behu</td></tr>
+      <tr><td>.itemconfig()</td><td>Zmena položky na Canvas (text, farba)</td></tr>
+      <tr><td>.grid()</td><td>Umiestnenie widgetu do mriežky</td></tr>
+      <tr><td>.after(ms, fn)</td><td>Zavolaj fn po ms milisekundách</td></tr>
+    </table>
+  </div>
+
+  <!-- Open Trivia DB API -->
+  <div class="card">
+    <h2>📡 Open Trivia DB API</h2>
+    <pre><span class="cm"># URL na 10 True/False otázok z vedy</span>
+https://opentdb.com/api.php
+  ?amount=10
+  &amp;type=boolean
+  &amp;category=17
+
+<span class="cm"># Štruktúra odpovede</span>
+{
+  <span class="st">"results"</span>: [
+    {
+      <span class="st">"question"</span>: <span class="st">"Is Earth flat?"</span>,
+      <span class="st">"correct_answer"</span>: <span class="st">"False"</span>,
+      <span class="st">"incorrect_answers"</span>: [<span class="st">"True"</span>]
+    },
+    ...
+  ]
+}</pre>
+    <div class="note">
+      <strong>Bez API kľúča</strong> – verejné API. Parametre: <code>amount</code>, <code>type</code> (boolean/multiple), <code>category</code> (číslo kategórie).
+    </div>
+  </div>
+
+  <!-- Porovnanie Day33 vs Day34 tkinter -->
+  <div class="card">
+    <h2>⚡ Day 33 vs Day 34 – Čo je nové</h2>
+    <table>
+      <tr><th>Day 33</th><th>Day 34</th></tr>
+      <tr><td>Procedurálny kód</td><td>OOP – triedy pre všetko</td></tr>
+      <tr><td>1 súbor (kanye.py)</td><td>5 súborov, každý 1 zodpovednosť</td></tr>
+      <tr><td>canvas.create_image</td><td>canvas.create_text + itemconfig</td></tr>
+      <tr><td>–</td><td>html.unescape()</td></tr>
+      <tr><td>–</td><td>Type hints v parametroch</td></tr>
+      <tr><td>–</td><td>window.after() miesto sleep()</td></tr>
+      <tr><td>smtplib, dotenv</td><td>–</td></tr>
+    </table>
+  </div>
+
+</div>
+</body>
+</html>
